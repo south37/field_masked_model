@@ -1,0 +1,16 @@
+syntax = "proto3";
+package organization.service;
+
+option ruby_package = "UsersPb";
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  int32 age = 3;
+  Profile profile = 4;
+}
+
+message Profile {
+  int64 id = 1;
+  string introduction = 2;
+}
