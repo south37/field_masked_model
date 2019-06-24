@@ -88,7 +88,7 @@ $ u.name
 => "Taro"
 
 $ u.age
-=> FieldMaskedModel::NotAccessibleError: age is not specified as paths in field_mask!
+=> FieldMaskedModel::InaccessibleError: age is not specified as paths in field_mask!
 
 $ u.profile
 => <Profile

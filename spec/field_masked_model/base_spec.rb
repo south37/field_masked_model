@@ -36,9 +36,9 @@ describe FieldMaskedModel::Base do
         m = TestMsg::ClassA.new({ id: 1 })
         a = ClassA.new(field_mask: f, message: m)
         expect(a.id).to eq 1
-        expect { a.name }.to raise_error(FieldMaskedModel::NotAccessibleError)
-        expect { a.class_b }.to raise_error(FieldMaskedModel::NotAccessibleError)
-        expect { a.class_c_list }.to raise_error(FieldMaskedModel::NotAccessibleError)
+        expect { a.name }.to raise_error(FieldMaskedModel::InaccessibleError)
+        expect { a.class_b }.to raise_error(FieldMaskedModel::InaccessibleError)
+        expect { a.class_c_list }.to raise_error(FieldMaskedModel::InaccessibleError)
       end
     end
 
@@ -53,12 +53,12 @@ describe FieldMaskedModel::Base do
           }
         })
         a = ClassA.new(field_mask: f, message: m)
-        expect { a.id }.to raise_error(FieldMaskedModel::NotAccessibleError)
-        expect { a.name }.to raise_error(FieldMaskedModel::NotAccessibleError)
+        expect { a.id }.to raise_error(FieldMaskedModel::InaccessibleError)
+        expect { a.name }.to raise_error(FieldMaskedModel::InaccessibleError)
         expect(a.class_b).to be_a ClassB
-        expect { a.class_b.id }.to raise_error(FieldMaskedModel::NotAccessibleError)
+        expect { a.class_b.id }.to raise_error(FieldMaskedModel::InaccessibleError)
         expect(a.class_b.type).to eq "Power"
-        expect { a.class_c_list }.to raise_error(FieldMaskedModel::NotAccessibleError)
+        expect { a.class_c_list }.to raise_error(FieldMaskedModel::InaccessibleError)
       end
     end
 
@@ -218,6 +218,26 @@ describe FieldMaskedModel::Base do
       INSPECT
 
       expect(a.inspect).to eq result.gsub(/\n$/, '')
+    end
+  end
+
+  describe ".set_inaccessible_error_callback" do
+    let(:custom_error_class) {
+      Class.new(StandardError)
+    }
+    before do
+      stub_const("CustomErrorClass", custom_error_class)
+    end
+
+    it "can set custom error handler" do
+      class ClassA
+        set_inaccessible_error_callback -> (field) {
+          raise CustomErrorClass.new("Custom error! #{field} is inaccessible")
+        }
+      end
+
+      a = ClassA.new(field_mask: Google::Protobuf::FieldMask.new, message: TestMsg::ClassA.new)
+      expect { a.id }.to raise_error(CustomErrorClass)
     end
   end
 
