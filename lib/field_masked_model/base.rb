@@ -8,7 +8,7 @@ require "field_masked_model/model_pool"
 module FieldMaskedModel
   class Base
     class << self
-      attr_reader :msg, :model_pool
+      attr_reader :msg, :model_pool, :inaccessible_error_callback
 
       # @param [Class] klass A class represents the protobuf message class
       # @param [<Symbol, String>] exclude_fields
@@ -35,6 +35,11 @@ module FieldMaskedModel
           Kernel.warn("exclude_field must be called before msgclass", uplevel: 1)
         end
         _excluded_fields << name.to_s
+      end
+
+      # @param [Proc] callback
+      def set_inaccessible_error_callback(callback)
+        @inaccessible_error_callback = callback
       end
 
       # @return [<Symbol, { Symbol => Array }>]
@@ -221,10 +226,14 @@ module FieldMaskedModel
   private
 
     # @param [Symbol] field
-    # @raise [FieldMaskedModel::NotAccessibleError]
+    # @raise [FieldMaskedModel::InaccessibleError]
     def validate!(field)
       if !@accessible_fields.include?(field)
-        raise FieldMaskedModel::NotAccessibleError.new("`#{field}` is not specified as paths in field_mask!")
+        if self.class.inaccessible_error_callback
+          self.class.inaccessible_error_callback.call(field)
+        else
+          raise FieldMaskedModel::InaccessibleError.new("`#{field}` is not specified as paths in field_mask!")
+        end
       end
     end
   end
