@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    field_masked_model (0.1.0)
+    field_masked_model (0.2.0)
       fmparser (~> 0.1)
       google-protobuf (~> 3.7)
 
