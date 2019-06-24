@@ -27,6 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "pry", "~> 0.11"
   spec.add_development_dependency "rspec", "~> 3.8"
-  spec.add_runtime_dependency "fmparser", "~> 0.1"
+  spec.add_runtime_dependency "fmparser", "0.1.0"
   spec.add_runtime_dependency "google-protobuf", "~> 3.7"
 end
