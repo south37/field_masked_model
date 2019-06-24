@@ -58,8 +58,22 @@ end
 
 ```ruby
 $ u = User.new(
-*   field_mask: Google::Protobuf::FieldMask.new(paths: ["id", "name", "profile.id", "profile.introduction"]),
-*   message:    UsersPb::User.new(id: 3, name: "Taro", profile: UsersPb::Profile.new(id: 4, introduction: "My name is Taro")),
+*   field_mask: Google::Protobuf::FieldMask.new(
+*     paths: [
+*       "id",
+*       "name",
+*       "profile.id",
+*       "profile.introduction"
+*     ]
+*   ),
+*   message: UsersPb::User.new(
+*     id: 3,
+*     name: "Taro",
+*     profile: UsersPb::Profile.new(
+*       id: 4,
+*       introduction: "My name is Taro"
+*     )
+*   ),
 * )
 => <User
  id: 3,
